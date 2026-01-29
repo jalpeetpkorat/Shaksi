@@ -1,0 +1,1860 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cormorant+Garamond:wght@400;600;700&display=swap');
+
+:root {
+    --bg-color: #0d0101;
+    /* Dark Blood Black */
+    --text-color: #e0e0e0;
+    /* Off-white for better readability on dark */
+    --accent-red: #ff3333;
+    /* Bright Blood Red */
+    --accent-rust: #b33918;
+    /* Rust */
+    --accent-dark: #1E1E1E;
+    /* Dark Grey */
+    --font-heading: 'Cinzel Decorative', cursive;
+    --font-body: 'Cormorant Garamond', serif;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    /* Allow scrolling if content is too tall */
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: crosshair;
+    font-family: var(--font-body);
+    /* Horror vibe */
+    user-select: none;
+    /* Prevent selection */
+    -webkit-user-select: none;
+}
+
+/* SCARY TEXT STYLE */
+.scary-text {
+    color: red !important;
+    text-shadow: 0 0 5px red;
+    font-weight: bold;
+    animation: shake 0.5s infinite;
+}
+
+/* COMPACT LAYOUT FIX - Only for small screens */
+@media (max-width: 768px),
+(max-height: 700px) {
+    #card-arena {
+        margin: 15px 0 !important;
+        min-height: 220px !important;
+        gap: 30px !important;
+    }
+
+    .card {
+        width: 140px !important;
+        height: 190px !important;
+    }
+
+    .card-power {
+        font-size: 2.5rem !important;
+    }
+
+    #card-status {
+        margin: 10px 0 !important;
+        min-height: 40px !important;
+    }
+
+    .controls {
+        margin: 15px 0 !important;
+    }
+
+    .phase {
+        padding: 20px;
+        width: 95%;
+    }
+}
+
+/* Card Images */
+.card-back {
+    transform: rotateY(180deg);
+    background: var(--bg-color);
+    background-image: url('assets/cardBack.png');
+    /* "Component 4" -> cardBack.png */
+    background-size: cover;
+}
+
+.card-front {
+    font-size: 3rem;
+    background-color: #000;
+    background-image: url('assets/cardFace.png');
+    /* Front Image */
+    background-size: cover;
+    color: white;
+    /* Ensure text is visible on top of image */
+    text-shadow: 2px 2px 4px #000;
+    /* Shadow for readability */
+}
+
+/* DECOR LAYER & GRID */
+#decor-layer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+    /* Behind UI, above BG */
+    overflow: hidden;
+}
+
+.hud-block {
+    position: absolute;
+    color: var(--accent-red);
+    opacity: 0.5;
+    font-family: var(--font-mono);
+}
+
+.hud-block .glitch-text {
+    font-size: 5rem;
+    font-weight: 900;
+    text-shadow: 0 0 10px var(--accent-rust), 0 0 20px rgba(128, 32, 0, 0.5);
+}
+
+.hud-block .sub-text {
+    font-size: 1.1rem;
+    margin-top: 8px;
+    line-height: 1.5;
+    opacity: 0.85;
+    white-space: pre-wrap;
+    text-shadow: 0 0 5px rgba(128, 32, 0, 0.8);
+}
+
+.top-left {
+    top: 20px;
+    left: 20px;
+    text-align: left;
+}
+
+.top-right {
+    top: 20px;
+    right: 20px;
+    text-align: right;
+}
+
+.bottom-left {
+    bottom: 20px;
+    left: 20px;
+    text-align: left;
+}
+
+.bottom-right {
+    bottom: 20px;
+    right: 20px;
+    text-align: right;
+}
+
+/* LATIN WORDS */
+.latin-word {
+    position: absolute;
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--accent-red);
+    opacity: 0.15;
+    font-family: var(--font-mono);
+    text-shadow: 0 0 8px rgba(128, 32, 0, 0.6);
+    animation: float 8s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-20px);
+    }
+}
+
+.grid-lines {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background:
+        linear-gradient(to right, rgba(128, 32, 0, 0.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(128, 32, 0, 0.05) 1px, transparent 1px);
+    background-size: 50px 50px;
+    z-index: -1;
+}
+
+/* SCAN LINE */
+.scan-line {
+    position: absolute;
+    width: 100%;
+    height: 100px;
+    background: linear-gradient(to bottom, transparent, rgba(255, 0, 0, 0.1), transparent);
+    animation: scanMove 8s linear infinite;
+    top: -100px;
+}
+
+/* GAME LOGO (START SCREEN) */
+.title-logo {
+    max-width: 90%;
+    /* Removed fixed 600px width to prevent pixelation if source is small */
+    width: auto;
+    max-height: 250px;
+    filter: drop-shadow(0 0 10px rgba(179, 57, 24, 0.7));
+    margin-bottom: 20px;
+    user-select: none;
+    -webkit-user-drag: none;
+    animation: float 6s ease-in-out infinite;
+}
+
+/* GLOBAL LOGO (IN-GAME) */
+#global-logo {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    /* Top Right corner */
+    width: 120px;
+    /* Smaller watermark size */
+    height: auto;
+    z-index: 999;
+    /* On top of everything */
+    opacity: 0.8;
+    filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.8));
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+}
+
+@keyframes scanMove {
+    0% {
+        top: -100px;
+    }
+
+    100% {
+        top: 100%;
+    }
+}
+
+/* CRT EFFECTS */
+#scanlines {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+    background-size: 100% 2px, 3px 100%;
+    pointer-events: none;
+    z-index: 10;
+}
+
+#vignette {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(0, 0, 0, 0) 30%, rgba(80, 0, 0, 0.5) 80%, rgba(0, 0, 0, 1) 100%);
+    pointer-events: none;
+    z-index: 10;
+    animation: breathe 5s infinite ease-in-out;
+}
+
+@keyframes breathe {
+    0% {
+        opacity: 0.8;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0.8;
+    }
+}
+
+/* UI ELEMENTS */
+h1 {
+    font-size: 3rem;
+    font-family: var(--font-heading);
+    letter-spacing: 5px;
+    color: var(--text-color);
+    text-shadow: 0 0 10px var(--accent-red);
+}
+
+h2 {
+    color: var(--text-color);
+    font-family: var(--font-heading);
+    border-bottom: 1px solid var(--accent-red);
+    padding-bottom: 10px;
+    display: inline-block;
+}
+
+/* UNIVERSAL GLITCH BUTTON */
+.glitch-btn,
+button {
+    background: rgba(30, 30, 30, 0.8);
+    border: 1px solid var(--accent-rust);
+    color: var(--text-color);
+    padding: 15px 30px;
+    font-family: var(--font-mono);
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin: 10px;
+    text-transform: uppercase;
+    font-weight: bold;
+    position: relative;
+    overflow: hidden;
+}
+
+.glitch-btn:hover,
+button:hover {
+    background: var(--accent-rust);
+    color: #000;
+    box-shadow: 0 0 15px var(--accent-rust);
+    border-color: var(--text-color);
+    transform: scale(1.05);
+}
+
+.glitch-btn:active,
+button:active {
+    transform: scale(0.98);
+}
+
+/* This rule is likely for a general overlay or container for phases */
+/* It was not explicitly named in the provided snippet, but inferred from context */
+/* Assuming it applies to a container that holds the phases */
+.phase-container {
+    /* Placeholder name, adjust if actual element exists */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    /* Centered overlay */
+    text-align: center;
+    pointer-events: none;
+    /* Let clicks pass through generally */
+}
+
+/* Ensure interactive elements are clickable */
+#phase-start button,
+.phase button {
+    pointer-events: auto;
+}
+
+/* PHASE MANAGEMENT */
+.phase {
+    display: none;
+    width: 80%;
+    max-width: 800px;
+    opacity: 0;
+    transition: opacity 0.5s;
+    position: relative;
+    z-index: 20;
+    /* ABOVE background/scanlines */
+    /* ABOVE background/scanlines */
+    background: rgba(10, 0, 0, 0.9);
+    padding: 40px;
+    border: 1px solid var(--accent-red);
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.9), inset 0 0 20px rgba(80, 0, 0, 0.2);
+    backdrop-filter: blur(5px);
+    /* Layout properties (inactive until display:flex applied) */
+    flex-direction: column;
+    align-items: center;
+}
+
+.phase.active {
+    display: flex !important;
+    /* Force visibility and flex layout */
+    opacity: 1;
+    animation: fadeIn 0.5s forwards;
+    gap: 15px;
+    /* Consistent spacing */
+    justify-content: center;
+    /* Center content vertically if height allows */
+}
+
+.hidden {
+    display: none !important;
+}
+
+.controls {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin: 15px 0;
+    /* Reduced from 30px */
+    flex-wrap: wrap;
+}
+
+/* INFO BUTTON */
+.info-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid var(--accent-rust);
+    background: rgba(0, 0, 0, 0.8);
+    color: var(--text-color);
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 100;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: 0 0 5px var(--accent-red);
+    /* Glow to make it visible */
+}
+
+.info-btn:hover {
+    background: var(--accent-red);
+    color: #fff;
+    box-shadow: 0 0 20px var(--accent-red);
+    transform: scale(1.1);
+}
+
+/* INFO MODAL */
+#info-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.95);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(5px);
+}
+
+.info-content {
+    background: #111;
+    border: 2px solid var(--accent-rust);
+    padding: 40px;
+    max-width: 600px;
+    width: 90%;
+    color: var(--text-color);
+    font-family: var(--font-body);
+    text-align: left;
+    box-shadow: 0 0 30px rgba(166, 103, 0, 0.4);
+    position: relative;
+}
+
+#info-text {
+    margin: 20px 0;
+    line-height: 1.6;
+    font-size: 1.1rem;
+    white-space: pre-line;
+    /* Respect newlines */
+}
+
+/* Duplicate cleanup */
+#btn-deal {
+    display: inline-block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    min-width: 200px;
+}
+
+#btn-deal.hidden {
+    display: none !important;
+}
+
+/* GLITCH BUTTON */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* DELAYED FADE IN */
+.fade-delay {
+    opacity: 0;
+    animation: fadeIn 1s ease-out forwards;
+    animation-delay: 2.5s;
+    /* 2.5s cooldown */
+}
+
+/* GAME BRIEFING TEXT */
+.game-brief {
+    font-size: 1rem;
+    color: var(--accent-red);
+    font-style: italic;
+    opacity: 0.8;
+    margin-bottom: 10px;
+    text-shadow: 0 0 5px rgba(255, 0, 0, 0.3);
+}
+
+/* HIDDEN CLUES */
+.clue-text {
+    font-size: 0.8rem;
+    color: #111;
+    /* Hidden */
+    margin-top: 5px;
+    transition: color 0.5s;
+    cursor: help;
+}
+
+.clue-text:hover {
+    color: var(--accent-rust);
+    /* Reveal on hover */
+}
+
+/* VIDEO */
+/* VIDEO */
+#video-wrapper,
+#video-wrapper-2 {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    /* Fill space */
+    background: black;
+    /* No border or aspect ratio to avoid white bars */
+}
+
+video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+#video-overlay,
+#video-overlay-2 {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+}
+
+.glitch-text {
+    position: relative;
+    animation: glitchText 2s infinite;
+}
+
+@keyframes glitchText {
+    0% {
+        opacity: 1;
+        transform: translate(0);
+    }
+
+    10% {
+        opacity: 0.8;
+        transform: translate(-2px, 2px);
+    }
+
+    20% {
+        opacity: 1;
+        transform: translate(2px, -2px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translate(0);
+    }
+}
+
+/* CARDS PHASE */
+#card-arena {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    margin: 5px 0;
+    /* Minimal margin */
+    min-height: 160px;
+    /* Reduced from 200px */
+}
+
+.card-side {
+    display: flex;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    transition: background-image 0.5s ease-in-out;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    /* Reduced from 15px */
+}
+
+.card-side>p {
+    margin: 0;
+    font-size: 1.2rem;
+    color: var(--text-color);
+    font-weight: bold;
+}
+
+/* CENTER CONFRONTATION AXIS */
+.card-vs {
+    font-size: 2.5rem;
+    color: var(--accent-red);
+    font-weight: bold;
+}
+
+.card {
+    width: 110px;
+    /* Reduced from 140px */
+    height: 150px;
+    /* Reduced from 190px */
+    /* CARD BACK VISIBLE BY DEFAULT */
+    background-color: #111;
+    background-image: url('assets/cardBack.png');
+    background-size: cover;
+    background-position: center;
+    border: 2px solid var(--accent-rust);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    /* Bouncy flip */
+    box-shadow: 0 0 20px rgba(188, 19, 254, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+/* FLIPPED STATE -> SHOW FACE */
+.card.flipped {
+    background-image: url('assets/cardFace.png');
+    box-shadow: 0 0 30px var(--text-color);
+    border-color: var(--text-color);
+    transform: rotateY(360deg);
+    /* Full spin for effect */
+}
+
+/* Hide text when card is face down (back showing) */
+.card:not(.flipped) .card-name,
+.card:not(.flipped) .card-power {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Show text when flipped */
+.card .card-name {
+    font-size: 1.1rem;
+    margin: 0;
+    color: #fff;
+    /* White text for contrast on card face */
+    font-weight: bold;
+    text-shadow: 2px 2px 0px #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+    /* Heavy outline */
+    z-index: 2;
+    opacity: 1;
+    transition: opacity 0.3s;
+}
+
+.card .card-power {
+    font-size: 3.5rem;
+    margin: 0;
+    color: var(--text-color);
+    color: var(--text-color);
+    font-weight: bold;
+    text-shadow: 3px 3px 0px #000;
+    z-index: 2;
+    /* Heavy outline */
+    opacity: 1;
+    transition: opacity 0.3s;
+}
+
+/* Make card text smaller to fit new size */
+.card .card-power {
+    font-size: 2.5rem;
+    /* Reduced from 3.5rem */
+}
+
+.card .card-name {
+    font-size: 0.9rem;
+    /* Reduced from 1.1rem */
+}
+
+/* Old individual card styles removed during update */
+
+/* INTRO PHASE REMOVED */
+
+#card-status {
+    font-size: 1.2rem;
+    margin: 5px 0;
+    /* Minimal margin */
+    text-align: center;
+    min-height: 20px;
+    color: var(--text-color);
+    font-weight: bold;
+    text-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+    /* Better visibility */
+}
+
+/* CARD HAND */
+/* CARD HAND - COMPACTED */
+.card-hand {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin: 10px 0;
+    /* Reduced from 30px */
+    min-height: 100px;
+    /* Reduced */
+}
+
+.hand-card {
+    width: 110px;
+    height: 130px;
+    /* Force sufficient height */
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.7);
+    border: 1px solid var(--accent-rust);
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    line-height: 1.4;
+    text-align: center;
+    box-sizing: border-box;
+    /* Ensure padding doesn't break metrics */
+}
+
+.hand-card:hover {
+    transform: translateY(-10px);
+    border-color: var(--text-color);
+    box-shadow: 0 10px 30px rgba(166, 103, 0, 0.4);
+    background: rgba(20, 0, 0, 0.9);
+}
+
+.hand-card strong {
+    display: block;
+    font-size: 0.9rem;
+    margin-bottom: 4px;
+}
+
+.hand-card .card-val {
+    display: block;
+    font-size: 1.5rem;
+    /* Reduced from 2rem */
+    color: var(--accent-red);
+    margin: 5px 0;
+}
+
+.hand-card em {
+    display: block;
+    font-size: 0.8rem;
+    opacity: 0.7;
+}
+
+/* SOUL METER */
+/* SOUL METER */
+.soul-meter {
+    margin: 10px 0;
+    /* Reduced */
+    text-align: center;
+    width: 100%;
+    /* Ensure it centers in flex */
+}
+
+.soul-meter p {
+    font-size: 1.2rem;
+    color: #fff;
+    text-shadow: 0 0 5px #000;
+    margin-bottom: 5px;
+}
+
+.soul-bar-container {
+    width: 80%;
+    height: 30px;
+    background: rgba(0, 0, 0, 0.8);
+    border: 2px solid var(--accent-rust);
+    margin: 10px auto;
+    overflow: hidden;
+}
+
+#soul-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent-red), var(--text-color));
+    transition: width 0.5s, background 0.5s;
+    box-shadow: 0 0 15px rgba(166, 103, 0, 0.8);
+}
+
+#soul-value {
+    font-size: 2rem;
+    color: var(--text-color);
+    font-weight: bold;
+}
+
+#soul-meter {
+    margin: 10px 0;
+}
+
+/* WAGER CONTROLS */
+.wager-controls {
+    margin: 15px 0;
+    text-align: center;
+}
+
+.wager-controls p {
+    color: #fff;
+    /* BRIGHT WHITE for visibility */
+    text-shadow: 0 0 10px var(--accent-red);
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+}
+
+.wager-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+}
+
+.wager-buttons button {
+    padding: 10px 15px;
+    font-size: 0.9rem;
+    background: rgba(90, 9, 9, 0.5);
+    border: 2px solid var(--accent-rust);
+    transition: all 0.3s;
+}
+
+.wager-buttons button:hover {
+    background: rgba(128, 32, 0, 0.8);
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(166, 103, 0, 0.6);
+}
+
+.wager-buttons button.selected {
+    background: var(--accent-rust);
+    border-color: var(--text-color);
+    box-shadow: 0 0 25px var(--text-color);
+}
+
+/* RITUAL (RPS) */
+#rps-arena {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+    margin: 30px 0;
+}
+
+.rps-side {
+    text-align: center;
+}
+
+.rps-card {
+    width: 120px;
+    height: 120px;
+    border: 2px solid var(--accent-rust);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 3rem;
+    background: rgba(0, 0, 0, 0.5);
+    transition: all 0.3s;
+    box-shadow: 0 0 15px rgba(128, 32, 0, 0.3);
+}
+
+#card-status {
+    font-size: 1.3rem;
+    margin: 30px 0;
+    text-align: center;
+    min-height: 60px;
+    color: var(--text-color);
+}
+
+.rps-vs {
+    font-size: 2rem;
+    color: var(--accent-red);
+    font-weight: bold;
+}
+
+#rps-result {
+    margin: 20px 0;
+    font-size: 1.5rem;
+    color: var(--text-color);
+}
+
+/* BLUR EFFECT FOR PHASE TRANSITIONS/RPS */
+.blur-active {
+    filter: blur(10px);
+    transition: filter 0.5s;
+}
+
+/* VIDEO PHASE */
+/* VIDEO PHASE - FULLSCREEN OVERRIDES */
+#phase-video,
+#phase-video-2 {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    background: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    /* On top of everything */
+}
+
+/* Ensure the video element fills the screen completely */
+#phase-video video,
+#phase-video-2 video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* Cover the screen, cropping if needed to maintain aspect ratio */
+    border: none;
+    box-shadow: none;
+    max-width: none;
+    min-height: 0;
+}
+
+#skip-hint {
+    position: absolute;
+    bottom: 30px;
+    right: 30px;
+    margin-top: 0;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.5);
+    background: rgba(0, 0, 0, 0.5);
+    padding: 10px 20px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    animation: blink 3s infinite;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    z-index: 101;
+}
+
+/* TROLLEY */
+.timer-bar-container {
+    width: 100%;
+    height: 20px;
+    border: 1px solid var(--accent-red);
+    margin: 20px 0;
+}
+
+#timer-bar {
+    height: 100%;
+    width: 100%;
+    background: var(--accent-red);
+    transition: width 1s linear;
+}
+
+#trolley-desc {
+    color: #ffffff;
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    text-shadow: 0 0 5px #000, 0 0 10px #000;
+    background: rgba(0, 0, 0, 0.4);
+    padding: 15px;
+    border: 1px solid var(--accent-rust);
+}
+
+/* CHAT */
+#chat-log {
+    height: 300px;
+    overflow-y: auto;
+    overflow-y: auto;
+    border: 1px solid var(--accent-rust);
+    background: rgba(0, 0, 0, 0.8);
+    padding: 20px;
+    margin-bottom: 20px;
+    text-align: left;
+    font-family: var(--font-mono);
+    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
+}
+
+.chat-entry {
+    margin-bottom: 10px;
+}
+
+.chat-entry.player {
+    color: var(--text-color);
+    text-align: right;
+}
+
+.chat-entry.ai {
+    color: var(--accent-red);
+    text-align: left;
+}
+
+#chat-input-area {
+    display: flex;
+    gap: 10px;
+}
+
+#chat-input {
+    flex: 1;
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.8);
+    border: 2px solid var(--accent-rust);
+    color: #FFF;
+    /* White text for visibility */
+    font-family: var(--font-mono);
+    font-size: 1.1rem;
+    outline: none;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+#chat-input:focus {
+    border-color: var(--text-color);
+    box-shadow: 0 0 15px rgba(166, 103, 0, 0.4);
+}
+
+#btn-send {
+    padding: 15px 30px;
+    background: var(--accent-rust);
+    border: none;
+    color: #000;
+    font-weight: bold;
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: 1.1rem;
+}
+
+#btn-send:hover {
+    background: var(--text-color);
+    box-shadow: 0 0 15px var(--text-color);
+}
+
+/* REVEAL */
+#phase-reveal {
+    background: radial-gradient(circle, #2a0000 0%, #000000 90%);
+    border: 5px solid var(--accent-red);
+    box-shadow: inset 0 0 100px #8b0000;
+}
+
+.archetype-card {
+    border: 2px solid white;
+    padding: 40px;
+    margin: 20px auto;
+    max-width: 600px;
+    background: rgba(0, 0, 0, 0.7);
+    box-shadow: 0 0 30px rgba(139, 0, 0, 0.5);
+}
+
+.archetype-mask {
+    width: 200px;
+    height: auto;
+    display: block;
+    margin: 0 auto 30px;
+    filter: drop-shadow(0 0 20px var(--accent-red));
+    transition: opacity 1s;
+    animation: pulseGlow 3s infinite alternate;
+}
+
+@keyframes pulseGlow {
+    from {
+        filter: drop-shadow(0 0 10px #8b0000);
+    }
+
+    to {
+        filter: drop-shadow(0 0 30px #ff0000);
+    }
+}
+
+.mask-glitch {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 150px;
+    z-index: 30;
+    filter: drop-shadow(0 0 30px red);
+    transition: opacity 0.3s;
+}
+
+#arch-name {
+    color: var(--accent-red);
+    text-shadow: 0 0 10px red;
+    font-size: 2.5rem;
+    letter-spacing: 5px;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+}
+
+#arch-quote {
+    font-size: 1.2rem;
+    font-style: italic;
+    color: #fff;
+    /* Bright white for high contrast */
+    border-left: 4px solid var(--accent-red);
+    padding-left: 20px;
+    margin-bottom: 30px;
+    line-height: 1.5;
+    background: rgba(139, 0, 0, 0.2);
+    /* Subtle red backing */
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+#arch-desc {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #ffd7d7;
+    /* Very pale red/white for readability */
+    text-align: justify;
+    margin-bottom: 30px;
+    padding: 15px;
+    border: 1px solid rgba(255, 0, 0, 0.3);
+    background: rgba(0, 0, 0, 0.6);
+}
+
+#phase-reveal {
+    /* Ensure scrolling happens if content is tall */
+    overflow-y: auto !important;
+    justify-content: flex-start;
+    /* Start from top to prevent cut-off */
+    padding-top: 50px;
+}
+
+#phase-reveal button.glitch-btn {
+    margin-top: 40px;
+    margin-bottom: 60px;
+    /* Fix for cut-off */
+    font-size: 1.5rem;
+    padding: 20px 40px;
+    border: 2px solid var(--accent-red);
+    background: transparent;
+    color: var(--accent-red);
+    letter-spacing: 3px;
+    text-shadow: 0 0 5px red;
+    box-shadow: 0 0 20px rgba(139, 0, 0, 0.5);
+    transition: all 0.3s;
+}
+
+#phase-reveal button.glitch-btn:hover {
+    background: var(--accent-red);
+    color: black;
+    box-shadow: 0 0 50px red;
+    transform: scale(1.05);
+    cursor: pointer;
+}
+
+/* ANIMATIONS */
+@keyframes shake {
+
+    0%,
+    100% {
+        transform: translate(0, 0);
+    }
+
+    10%,
+    30%,
+    50%,
+    70%,
+    90% {
+        transform: translate(-5px, 5px);
+    }
+
+    20%,
+    40%,
+    60%,
+    80% {
+        transform: translate(5px, -5px);
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
+
+/* GLITCH ANIMATION */
+.glitch {
+    animation: glitch 1s linear infinite;
+}
+
+@keyframes glitch {
+
+    2%,
+    64% {
+        transform: translate(2px, 0) skew(0deg);
+    }
+
+    4%,
+    60% {
+        transform: translate(-2px, 0) skew(0deg);
+    }
+
+    62% {
+        transform: translate(0, 0) skew(5deg);
+    }
+}
+
+#vignette {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, transparent 40%, rgba(0, 0, 0, 0.95));
+    pointer-events: none;
+    z-index: 10;
+    animation: pulseVignette 5s infinite alternate;
+}
+
+@keyframes pulseVignette {
+    0% {
+        opacity: 0.8;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+/* INTRO PHASE */
+#phase-intro {
+    text-align: center;
+    max-width: 800px;
+}
+
+/* FLICKERING LIGHTS */
+#flicker-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: white;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 20;
+    animation: flickerLight 4s infinite;
+    mix-blend-mode: overlay;
+}
+
+@keyframes flickerLight {
+
+    0%,
+    100% {
+        opacity: 0;
+    }
+
+    92% {
+        opacity: 0;
+    }
+
+    93% {
+        opacity: 0.1;
+    }
+
+    94% {
+        opacity: 0;
+    }
+
+    96% {
+        opacity: 0.2;
+    }
+
+    98% {
+        opacity: 0;
+    }
+}
+
+/* EVASIVE BUTTONS */
+.evasive-btn {
+    position: relative;
+    transition: transform 0.1s;
+    animation: floatAround 3s infinite ease-in-out alternate;
+}
+
+@keyframes floatAround {
+    0% {
+        transform: translate(0, 0);
+    }
+
+    25% {
+        transform: translate(10px, -10px);
+    }
+
+    50% {
+        transform: translate(-10px, 15px);
+    }
+
+    75% {
+        transform: translate(15px, 5px);
+    }
+
+    100% {
+        transform: translate(-5px, -10px);
+    }
+}
+
+.evasive-btn:hover {
+    animation-play-state: paused;
+    transform: scale(0.9) translate(10px, -10px);
+}
+
+/* TROLLEY ANIMATION */
+#trolley-track {
+    width: 100%;
+    height: 50px;
+    border-bottom: 2px solid #555;
+    position: relative;
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+#trolley-cart {
+    width: 60px;
+    height: 40px;
+    background: var(--accent-red);
+    position: absolute;
+    left: -100px;
+    bottom: 0;
+    animation: trolleyMove 5s linear infinite;
+    box-shadow: 0 0 10px red;
+}
+
+@keyframes trolleyMove {
+    0% {
+        left: -100px;
+    }
+
+    100% {
+        left: 100%;
+    }
+}
+
+.bottom-right {
+    bottom: 20px;
+    right: 20px;
+}
+
+/* CHAT FIXES FOR VISIBILITY */
+.ai-msg {
+    color: var(--accent-red);
+    text-align: left;
+    margin-bottom: 10px;
+    font-weight: bold;
+    text-shadow: 0 0 5px rgba(255, 0, 0, 0.3);
+}
+
+.player-msg {
+    color: var(--text-color);
+    text-align: right;
+    margin-bottom: 10px;
+    opacity: 0.9;
+}
+
+/* GAME CONTAINER - CRITICAL LAYOUT FIX */
+#game-container {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 20;
+    overflow: hidden;
+}
+
+/* Phase Alignment Refinement */
+.phase {
+    display: none;
+    width: auto;
+    /* Shrink to fit content */
+    max-width: 700px;
+    /* Limit width */
+    max-height: 98vh;
+    /* Allow almost full height */
+    overflow-y: auto;
+    /* Scroll ONLY if absolutely necessary */
+    overflow-x: hidden;
+    position: relative;
+    background: rgba(0, 0, 0, 0.4);
+    /* High transparency as requested */
+    /* More TRANSPARENT */
+    border: 1px solid var(--accent-red);
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+    padding: 60px 30px 80px 30px;
+    /* EXTRA BOTTOM padding (80px) to stop cutoff */
+    /* Top padding 60px to preventing title clipping */
+    /* EXTRA PADDING to prevent bottom cut */
+    backdrop-filter: blur(2px);
+    /* Reduced blur */
+    /* Subtle blur */
+
+    /* Internal Layout */
+    /* Internal Layout - COMPACT & CENTERED */
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    /* Tighter gap */
+}
+
+.phase.active {
+    display: flex !important;
+    animation: fadeIn 0.4s ease-out forwards;
+}
+
+/* Ensure Info Button is always on top right of the CARD */
+.info-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2px solid var(--accent-red);
+    background: #000;
+    color: var(--accent-red);
+    font-family: serif;
+    font-style: italic;
+    font-weight: 900;
+    font-size: 1.2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 999;
+    box-shadow: 0 0 8px var(--accent-red);
+    padding: 0;
+    line-height: 1;
+}
+
+.info-btn:hover {
+    background: var(--accent-red);
+    color: #000;
+    box-shadow: 0 0 15px var(--accent-red);
+    transform: scale(1.1);
+}
+
+/* Normalize margins for consistent spacing */
+h1,
+h2 {
+    margin: 0 0 15px 0;
+    text-align: center;
+}
+
+#card-arena {
+    margin: 10px 0;
+    gap: 40px;
+}
+
+/* Ensure Soul Meter doesn't stretch weirdly */
+.soul-meter {
+    width: 80%;
+    max-width: 600px;
+    margin: 10px auto;
+}
+
+/* VIDEO PHASE OVERRIDE - FULLSCREEN */
+#phase-video {
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: none !important;
+    max-height: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: black !important;
+    border: none !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    overflow: hidden !important;
+    z-index: 9999 !important;
+    /* Ensure on top */
+}
+
+#intro-video {
+    width: 85% !important;
+    height: 85% !important;
+    object-fit: contain !important;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+}
+
+/* CONTEXT VIDEO (Full Screen similar to intro) */
+#phase-context-video,
+#phase-trolley-video {
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: none !important;
+    max-height: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: black !important;
+    border: none !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    overflow: hidden !important;
+    z-index: 9999 !important;
+}
+
+#context-video,
+#trolley-video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+#skip-hint {
+    position: absolute;
+    bottom: 30px;
+    right: 30px;
+    padding: 10px 20px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--accent-red);
+    color: var(--accent-red);
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.3s;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+#skip-hint:hover {
+    background: var(--accent-red);
+    color: black;
+}
+
+/* VISIBILITY FIXES */
+.warning {
+    color: var(--accent-red) !important;
+    font-weight: bold;
+    text-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+    margin-top: 15px;
+    font-size: 0.9rem;
+    opacity: 1 !important;
+}
+
+.subtitle {
+    color: var(--text-color);
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+    letter-spacing: 2px;
+    opacity: 0.8;
+}
+
+/* UPDATED CLUE VISIBILITY */
+.clue-text {
+    color: rgba(255, 255, 255, 0.2) !important;
+    font-size: 1rem !important;
+    margin-top: 20px !important;
+}
+
+/* SHAKE ANIMATION */
+@keyframes shake {
+    0% {
+        transform: translate(1px, 1px) rotate(0deg);
+    }
+
+    10% {
+        transform: translate(-1px, -2px) rotate(-1deg);
+    }
+
+    20% {
+        transform: translate(-3px, 0px) rotate(1deg);
+    }
+
+    30% {
+        transform: translate(3px, 2px) rotate(0deg);
+    }
+
+    40% {
+        transform: translate(1px, -1px) rotate(1deg);
+    }
+
+    50% {
+        transform: translate(-1px, 2px) rotate(-1deg);
+    }
+
+    60% {
+        transform: translate(-3px, 1px) rotate(0deg);
+    }
+
+    70% {
+        transform: translate(3px, 1px) rotate(-1deg);
+    }
+
+    80% {
+        transform: translate(-1px, -1px) rotate(1deg);
+    }
+
+    90% {
+        transform: translate(1px, 2px) rotate(0deg);
+    }
+
+    100% {
+        transform: translate(1px, -2px) rotate(-1deg);
+    }
+}
+
+
+
+.phase.active {
+    display: flex !important;
+    animation: fadeIn 0.4s ease-out forwards;
+}
+
+/* Ensure Info Button is always on top right of the CARD */
+.info-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2px solid var(--accent-red);
+    background: #000;
+    color: var(--accent-red);
+    font-family: serif;
+    font-style: italic;
+    font-weight: 900;
+    font-size: 1.2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 999;
+    box-shadow: 0 0 8px var(--accent-red);
+    padding: 0;
+    line-height: 1;
+}
+
+.info-btn:hover {
+    background: var(--accent-red);
+    color: #000;
+    box-shadow: 0 0 15px var(--accent-red);
+    transform: scale(1.1);
+}
+
+/* Normalize margins for consistent spacing */
+h1,
+h2 {
+    margin: 0 0 15px 0;
+    text-align: center;
+}
+
+#card-arena {
+    margin: 10px 0;
+    gap: 40px;
+}
+
+/* Ensure Soul Meter doesn't stretch weirdly */
+.soul-meter {
+    width: 80%;
+    max-width: 600px;
+    margin: 10px auto;
+}
+
+/* VIDEO PHASE OVERRIDE - FULLSCREEN */
+#phase-video {
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: none !important;
+    max-height: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: black !important;
+    border: none !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    overflow: hidden !important;
+    z-index: 9999 !important;
+    /* Ensure on top */
+}
+
+#intro-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+#skip-hint {
+    position: absolute;
+    bottom: 30px;
+    right: 30px;
+    padding: 10px 20px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--accent-red);
+    color: var(--accent-red);
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.3s;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+#skip-hint:hover {
+    background: var(--accent-red);
+    color: black;
+}
+
+/* VISIBILITY FIXES */
+.warning {
+    color: var(--accent-red) !important;
+    font-weight: bold;
+    text-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+    margin-top: 15px;
+    font-size: 0.9rem;
+    opacity: 1 !important;
+}
+
+.subtitle {
+    color: var(--text-color);
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+    letter-spacing: 2px;
+    opacity: 0.8;
+}
+
+/* UPDATED CLUE VISIBILITY */
+.clue-text {
+    color: rgba(255, 255, 255, 0.2) !important;
+    font-size: 1rem !important;
+    margin-top: 20px !important;
+}
+
+/* SHAKE ANIMATION */
+@keyframes shake {
+    0% {
+        transform: translate(1px, 1px) rotate(0deg);
+    }
+
+    10% {
+        transform: translate(-1px, -2px) rotate(-1deg);
+    }
+
+    20% {
+        transform: translate(-3px, 0px) rotate(1deg);
+    }
+
+    30% {
+        transform: translate(3px, 2px) rotate(0deg);
+    }
+
+    40% {
+        transform: translate(1px, -1px) rotate(1deg);
+    }
+
+    50% {
+        transform: translate(-1px, 2px) rotate(-1deg);
+    }
+
+    60% {
+        transform: translate(-3px, 1px) rotate(0deg);
+    }
+
+    70% {
+        transform: translate(3px, 1px) rotate(-1deg);
+    }
+
+    80% {
+        transform: translate(-1px, -1px) rotate(1deg);
+    }
+
+    90% {
+        transform: translate(1px, 2px) rotate(0deg);
+    }
+
+    100% {
+        transform: translate(1px, -2px) rotate(-1deg);
+    }
+}
+
+/* PRELUDE / CONSENT FORM STYLES */
+.intro-doc {
+    font-family: var(--font-mono);
+    text-align: left;
+    padding: 20px;
+    border: 1px dashed var(--accent-rust);
+    background: rgba(0, 0, 0, 0.6);
+}
+
+.doc-text {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #ccc;
+}
+
+.redacted {
+    background: #111;
+    color: transparent;
+    padding: 0 5px;
+    cursor: help;
+    transition: all 0.3s;
+    border-bottom: 2px solid var(--accent-red);
+}
+
+.redacted:hover {
+    background: transparent;
+    color: var(--accent-red);
+}
+
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    color: var(--accent-red);
+    transition: color 0.3s;
+}
+
+.checkbox-container input {
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+.checkmark {
+    height: 20px;
+    width: 20px;
+    background-color: #333;
+    border: 1px solid var(--accent-red);
+    margin-right: 15px;
+    display: inline-block;
+    position: relative;
+}
+
+.checkbox-container input:checked~.checkmark {
+    background-color: var(--accent-red);
+    box-shadow: 0 0 10px var(--accent-red);
+}
+
+.disabled {
+    opacity: 0.3;
+    pointer-events: none;
+    filter: grayscale(1);
+}

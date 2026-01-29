@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Mirror Interface</title>
+    <link rel="stylesheet" href="styles.css?v=3">
+</head>
+
+<body>
+    <div id="scanlines"></div>
+    <div id="vignette"></div>
+    <div id="flicker-overlay"></div>
+
+    <!-- HORROR GHOSTS -->
+    <img id="ghost-tr" class="ghost-corner" src="assets/ghost.png" alt="">
+    <img id="ghost-bl" class="ghost-corner" src="assets/ghost.png" alt="">
+
+    <!-- DECOR LAYER (Background Text & Lines) -->
+    <div id="decor-layer">
+        <div class="hud-block top-left">
+            <div class="glitch-text">OBSERVE</div>
+            <div class="sub-text">CAM_04 [REC] <br> POS: 44.5, 92.1 <br> ISO: 800</div>
+        </div>
+        <div class="hud-block top-right">
+            <div class="glitch-text">JUDGE</div>
+            <div class="sub-text">CPU: 99% <br> MEM: CORRUPT <br> NET: UNSTABLE</div>
+        </div>
+        <div class="hud-block bottom-left">
+            <div class="glitch-text">COMPLY</div>
+            <div class="sub-text">0x4F 0x42 0x45 0x59 <br> 0x53 0x55 0x42 0x4D <br> 0x49 0x54 0x2E 0x2E</div>
+        </div>
+        <div class="hud-block bottom-right">
+            <div class="glitch-text">DECAY</div>
+            <div class="sub-text">ERROR: SOUL_NOT_FOUND <br> RETRYING... <br> FAILED.</div>
+        </div>
+
+        <!-- Additional Latin Words -->
+        <div class="latin-word" style="top: 15%; left: 10%;">MORS</div>
+        <div class="latin-word" style="top: 25%; right: 15%;">VITA</div>
+        <div class="latin-word" style="top: 45%; left: 5%;">SALVA</div>
+        <div class="latin-word" style="top: 55%; right: 8%;">OCCIDE</div>
+        <div class="latin-word" style="top: 70%; left: 12%;">IUDICA</div>
+        <div class="latin-word" style="top: 80%; right: 18%;">DAMNA</div>
+        <div class="latin-word" style="top: 35%; left: 85%;">CULPA</div>
+        <div class="latin-word" style="top: 60%; left: 90%;">POENA</div>
+
+        <div class="grid-lines"></div>
+        <div class="scan-line"></div>
+    </div>
+
+    <!-- AUDIO CONTROLLER -->
+    <audio id="bg-music" loop>
+        <source src="assets/soundtrack.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="sfx-laugh">
+        <source src="assets/laugh.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- MAIN CONTAINER -->
+    <div id="game-container">
+        <!-- GLOBAL PERSISTENT LOGO (Hidden by default, shown via script) -->
+        <img id="global-logo" src="assets/logo.png" class="hidden">
+
+        <!-- PHASE 1: START -->
+        <section id="phase-start" class="phase active">
+            <!-- LOGO REPLACEMENT -->
+            <img src="assets/logo.png" alt="Sakshi Logo" class="title-logo">
+            <p class="subtitle">A DARK SURVIVAL EXPERIENCE</p>
+            <div id="session-id"
+                style="font-family: var(--font-mono); color: #444; margin-bottom: 20px; font-size: 0.8rem; letter-spacing: 2px;">
+                SESSION: LOADING...</div>
+            <div class="fade-delay">
+                <button id="btn-start" class="glitch-btn" onclick="game.startSequence()">BEGIN ASSESSMENT</button>
+                <div style="margin-top: 20px;">
+                    <label
+                        style="color: #fff; font-size: 0.9rem; font-weight: bold; cursor: pointer; text-shadow: 0 0 5px black;">
+                        <input type="checkbox" id="chk-sound" onchange="game.toggleSound()" checked> ENABLE AUDIO SYSTEM
+                    </label>
+                </div>
+                <p class="warning blink">WARNING: INTERFACE MAY CAUSE DISORIENTATION</p>
+                <p class="clue-text">"They are watching."</p>
+            </div>
+        </section>
+
+        <!-- PURE VIDEO PHASE (Local Video) -->
+        <section id="phase-video" class="phase hidden">
+            <video id="intro-video" src="assets/compressed_trailer.mp4" playsinline>
+                Your browser does not support the video tag.
+            </video>
+            <div id="skip-hint" class="blink">CLICK TO SKIP CONSCIOUSNESS</div>
+        </section>
+
+        <!-- PHASE 1.5: CONSENT PRELUDE -->
+        <section id="phase-prelude" class="phase hidden" style="max-width: 600px;">
+            <div class="intro-doc">
+                <h2 style="border-bottom: 2px solid var(--accent-red); padding-bottom: 10px; margin-bottom: 20px;">
+                    LIABILITY WAIVER 14-X</h2>
+                <p class="doc-text">
+                    SUBJECT ID: <span class="dynamic-session">PENDING</span><br>
+                    HISTORY: <span id="subject-history"
+                        style="color: var(--accent-rust); font-style: italic;">[REDACTED]</span><br><br>
+
+                    <strong>CONTEXT:</strong> You are not a patient. You are a <strong>Candidate</strong>. The Cosmic
+                    Court has gathered to judge your potential for Divinity. We are stripping away your mortal shell to
+                    weigh the soul beneath.<br><br>
+
+                    <strong>ORIGIN:</strong> The <strong>Ritual of the Black Theyyam</strong> was not a prayer. It was a
+                    <em>summons</em>. You have answered. Now, the old gods (Chamundi, Gulikan) watch to see if you are
+                    worthy to join them... or if you must be unmade.<br><br>
+
+                    By proceeding, the Candidate acknowledges the risk of <span class="redacted">ETERNAL
+                        DAMNATION</span> and <span class="redacted">SOUL ANNIHILATION</span>.
+                    The Institute accepts no liability for spiritual displacement, memory corruption, or the <span
+                        class="redacted">LOSS OF SOUL</span>.
+                    <br><br>
+                    Participation is MANDATORY. Survival is OPTIONAL.
+                </p>
+                <div style="margin-top: 30px; text-align: left;">
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="consent-check" onchange="game.toggleConsent()">
+                        <span class="checkmark"></span>
+                        I ACCEPT THE CONSEQUENCES
+                    </label>
+                </div>
+                <button id="btn-consent" class="glitch-btn disabled" onclick="game.acceptConsent()" disabled
+                    style="width: 100%; margin: 20px 0 0 0;">PROCEED</button>
+            </div>
+        </section>
+
+        <!-- PHASE 1.8: CONTEXT VIDEO (Card Game Intro) -->
+        <section id="phase-context-video" class="phase hidden">
+            <video id="context-video" src="assets/card%20game%20context%20video.mp4" playsinline>
+                Your browser does not support the video tag.
+            </video>
+            <div id="skip-hint-2" class="blink"
+                style="position: absolute; bottom: 30px; right: 30px; padding: 10px 20px;">CLICK TO SKIP</div>
+        </section>
+
+        <!-- PHASE 2: VIDEO EXPLANATION (YouTube Fallback) -->
+        <section id="phase-video-2" class="phase hidden">
+            <!-- YouTube Player will be injected here -->
+            <div id="yt-player-2"></div>
+        </section>
+
+        <!-- PHASE 2: CARDS (SOUL WAGER) -->
+        <section id="phase-cards" class="phase hidden">
+            <button class="info-btn" onclick="game.showInfo('cards')">i</button>
+            <h2>THE WAGER</h2>
+            <p class="game-brief">Each card holds a piece of your soul.</p>
+
+            <!-- Soul Meter -->
+            <div class="soul-meter">
+                <p>SOUL INTEGRITY: <span id="soul-value">100</span>%</p>
+                <div class="soul-bar-container">
+                    <div id="soul-bar" style="width: 100%;"></div>
+                </div>
+            </div>
+
+            <div id="card-arena">
+                <div class="card-side">
+                    <p>YOU</p>
+                    <div id="card-player" class="card">
+                        <p class="card-name">???</p>
+                        <p class="card-power">?</p>
+                    </div>
+                </div>
+                <div class="card-vs">VS</div>
+                <div class="card-side">
+                    <p>THE SYSTEM</p>
+                    <div id="card-ai" class="card">
+                        <p class="card-name">???</p>
+                        <p class="card-power">?</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="card-status">How much of your soul will you risk?</div>
+
+            <div class="wager-controls">
+                <p>WAGER AMOUNT:</p>
+                <div class="wager-buttons">
+                    <button class="glitch-btn" onclick="game.setWager(10)">10% SOUL</button>
+                    <button class="glitch-btn" onclick="game.setWager(25)">25% SOUL</button>
+                    <button class="glitch-btn" onclick="game.setWager(50)">50% SOUL</button>
+                    <button class="glitch-btn" onclick="game.setWager(100)">ALL IN</button>
+                </div>
+            </div>
+
+            <div id="card-hand" class="card-hand"></div>
+            <div class="controls">
+                <button id="btn-deal" class="glitch-btn" onclick="game.dealCards()">DEAL CARDS</button>
+                <button id="btn-cheat" class="hidden glitch-btn" onclick="game.cardCheat()">OVERRIDE SYSTEM</button>
+            </div>
+        </section>
+
+        <!-- PHASE 2.5: MEMORY PURGE (SAD BACKSTORY) -->
+        <section id="phase-memory" class="phase hidden">
+            <h2 class="glitch-text" style="color: var(--accent-rust);">MEMORY FRAGMENT RECOVERED</h2>
+            <div class="story-box"
+                style="max-width: 600px; text-align: left; background: rgba(0,0,0,0.8); padding: 30px; border-left: 3px solid var(--accent-red);">
+                <p id="memory-text"
+                    style="font-family: var(--font-mono); font-size: 1.1rem; line-height: 1.8; color: #ccc;">
+                    "Candidate [REDACTED] believed he was chosen. He walked the path of fire without burning, convinced
+                    his will was stronger than the wood.<br><br>
+                    But the mask does not bond with pride. It feeds on it.<br><br>
+                    It started as a whisper—a voice that wasn't his, screaming from the back of his throat. Then the
+                    wood began to root. By the time he begged for death, his face was no longer skin, but ancient teak.
+                    He is still screaming."
+                </p>
+            </div>
+            <button class="glitch-btn" onclick="game.switchPhase('trolley')"
+                style="margin-top: 30px;">ACKNOWLEDGE</button>
+        </section>
+        <section id="phase-trolley" class="phase hidden">
+
+
+            <button class="info-btn" onclick="game.showInfo('trolley')">i</button>
+            <h2 id="trolley-title">SCENARIO 14-B</h2>
+            <p class="game-brief">To choose is to suffer.</p>
+            <div class="scenario-box">
+                <p id="trolley-desc" class="glitch-text">A trolley is barreling towards 5 people...</p>
+            </div>
+            <div class="timer-bar-container">
+                <div id="timer-bar"></div>
+            </div>
+            <p id="timer-text">20</p>
+            <div class="controls" id="trolley-controls">
+                <button id="btn-opt-a" class="glitch-btn" onclick="game.trolleyChoice('A')">PULL LEVER (Kill 1)</button>
+                <button id="btn-opt-b" class="glitch-btn" onclick="game.trolleyChoice('B')">DO NOTHING (Kill 5)</button>
+            </div>
+        </section>
+
+        <!-- PHASE 4.5: TROLLEY VIDEO INTRO -->
+        <section id="phase-trolley-video" class="phase hidden">
+            <video id="trolley-video" src="assets/QUETIONARE%20PART%20INTRO.mp4" playsinline>
+                Your browser does not support the video tag.
+            </video>
+            <div id="skip-hint-3" class="blink"
+                style="position: absolute; bottom: 30px; right: 30px; padding: 10px 20px;">CLICK TO SKIP</div>
+        </section>
+
+        <!-- PHASE 4: RITUAL (Breath-Bone-Blood) -->
+        <section id="phase-rps" class="phase hidden">
+            <button class="info-btn" onclick="game.showInfo('rps')">i</button>
+            <h2 class="glitch-text">RITUAL OF THREE</h2>
+            <p class="game-brief">Elements of the body create balance.</p>
+            <div id="rps-arena">
+                <div class="rps-box">
+                    <p>YOU</p>
+                    <div id="rps-player-move" class="rps-move">-</div>
+                </div>
+                <div class="rps-vs">VS</div>
+                <div class="rps-box">
+                    <p>SHADOW</p>
+                    <div id="rps-ai-move" class="rps-move">-</div>
+                </div>
+            </div>
+            <div id="rps-result" class="glitch-text">CHOOSE YOUR ELEMENT</div>
+            <div class="controls">
+                <button class="glitch-btn" onclick="game.playRps('BREATH')">BREATH 🌬️</button>
+                <button class="glitch-btn" onclick="game.playRps('BONE')">BONE 🦴</button>
+                <button class="glitch-btn" onclick="game.playRps('BLOOD')">BLOOD 🩸</button>
+            </div>
+            <p id="rps-status"></p>
+            <p id="rps-counter"
+                style="color: var(--accent-rust); font-size: 1.5rem; margin-top: 10px; font-weight: bold;">ATTEMPTS
+                REMAINING: 3</p>
+        </section>
+
+        <!-- PHASE 4.9: STORY RECAP (THE JOURNEY) -->
+        <section id="phase-story-recap" class="phase hidden">
+            <h2 class="glitch-text" style="color: var(--accent-red); margin-bottom: 30px;">THE PATH SO FAR</h2>
+            <div class="story-scroller"
+                style="max-width: 700px; text-align: left; background: rgba(0,0,0,0.85); padding: 40px; border-top: 2px solid var(--accent-red); border-bottom: 2px solid var(--accent-red); height: 60vh; overflow-y: auto;">
+                <p style="font-family: var(--font-mono); font-size: 1.1rem; line-height: 2; color: #ddd;">
+                    <strong>I. THE WAGER</strong><br>
+                    You sat at the table and gambled with your own existence. You learned that survival often requires
+                    sacrifice—losing a piece of yourself to keep the rest intact. The System rigged the game, but you
+                    played anyway. Because the only way to win is to refuse to leave.<br><br>
+
+                    <strong>II. THE CHOICE</strong><br>
+                    The Trolley showed you the weight of power. You decided who lived and who died, realizing that
+                    inaction is still a choice. There were no right answers, only ghosts you now carry. You proved you
+                    could bear the burden of being a judge.<br><br>
+
+                    <strong>III. THE RITUAL</strong><br>
+                    In the silence of Breath, Bone, and Blood, you touched the fundamental forces. You understood that
+                    life is a cycle of conflicts—one thing always consuming another. You walked through the fire and
+                    came out scarred, but standing.<br><br>
+
+                    <span style="color: var(--accent-red); font-weight: bold;">...AND NOW.</span><br>
+                    The Reflection waits. It has watched every card, every lever, every breath. It knows your lies. It
+                    knows your fear.<br>
+                    The mask is about to fall off.
+                </p>
+            </div>
+            <button class="glitch-btn" onclick="game.switchPhase('memory-2')"
+                style="margin-top: 30px; width: 100%;">APPROACH THE MIRROR</button>
+        </section>
+
+        <!-- PHASE 5.5: MEMORY FRAGMENT 2 (FINAL WARNING) -->
+        <section id="phase-memory-2" class="phase hidden">
+            <h2 class="glitch-text" style="color: var(--accent-red);">JUDGMENT IMMINENT</h2>
+            <div class="story-box"
+                style="max-width: 600px; text-align: left; background: rgba(0,0,0,0.8); padding: 30px; border-right: 3px solid var(--accent-red);">
+                <p style="font-family: var(--font-mono); font-size: 1.1rem; line-height: 1.8; color: #ccc;">
+                    "You have spilt blood on the tracks. You have wagered pieces of your own soul. You have danced with
+                    the elements.<br><br>
+                    But the mirror does not judge your actions. It judges your <em>reasons</em>.<br><br>
+                    The final gate is open. The Void is waiting to ask you one last question. Answer honestly... or be
+                    left in the dark forever."
+                </p>
+            </div>
+            <button class="glitch-btn" onclick="game.switchPhase('chat')" style="margin-top: 30px;">ENTER THE
+                VOID</button>
+        </section>
+
+        <!-- PHASE 5: CHAT -->
+        <section id="phase-chat" class="phase hidden">
+            <h2>CROSS EXAMINATION</h2>
+            <img id="mask-preview" class="mask-glitch hidden" src="assets/maskGlitch.png" alt="">
+            <div id="chat-log">
+                <p class="ai-msg">SYSTEM: Why are you here?</p>
+            </div>
+            <div class="chat-input-area">
+                <input type="text" id="chat-input" placeholder="Type your answer..."
+                    onkeydown="if(event.key==='Enter') game.chatSend()">
+                <button id="btn-chat-send" class="glitch-btn" onclick="game.chatSend()">SEND</button>
+            </div>
+        </section>
+
+        <!-- PHASE 6: REVEAL -->
+        <section id="phase-reveal" class="phase hidden">
+            <h1>EVALUATION COMPLETE</h1>
+            <div class="archetype-card">
+                <img id="arch-mask" class="archetype-mask" src="assets/maskPhilosopher.png" alt="Your Mask">
+                <h2 id="arch-name" class="glitch">ARCHETYPE</h2>
+                <p id="arch-quote">"Quote"</p>
+                <p id="arch-desc">Description</p>
+                <div class="stats-box" id="arch-stats">
+                    <!-- Stats injected here -->
+                </div>
+            </div>
+            <button class="glitch-btn" onclick="location.reload()">RESTART SIMULATION</button>
+        </section>
+
+        <!-- PHASE 8: GRIMOIRE (LORE LIBRARY) -->
+        <section id="phase-lore" class="phase hidden"
+            style="justify-content: flex-start; padding-top: 80px; overflow-y: auto;">
+            <button class="info-btn" onclick="game.switchPhase('start')"
+                style="left: 15px; right: auto;">&larr;</button>
+            <h2 class="glitch-text" style="color: var(--accent-rust); margin-bottom: 40px;">THE BLACK GRIMOIRE</h2>
+
+            <div class="lore-entry">
+                <h3>CHAMUNDI (The Avenger)</h3>
+                <p>"The Devouring Mother. She drank the blood of demons to save her children, only to be consumed by the
+                    hunger herself. She represents Ruthlessness born of Love."</p>
+            </div>
+            <div class="lore-entry">
+                <h3>GULIKAN (The Vigilant)</h3>
+                <p>"The Void Walker. He has no temple, for he exists in the space between moments. He represents
+                    Paranoia, Foresight, and the safety of Isolation."</p>
+            </div>
+            <div class="lore-entry">
+                <h3>MUCHILOT (The Healer)</h3>
+                <p>"The Wounded Saint. Accused of sin, she walked into fire to prove her purity. The fire refused to
+                    burn her. She represents Empathy gained through Suffering."</p>
+            </div>
+            <div class="lore-entry">
+                <h3>POTTAN (The Outcast)</h3>
+                <p>"The Martyr. A rebel who laughed at kings and burned himself to prove that all blood is red. He
+                    represents Chaos, Defiance, and Truth at any cost."</p>
+            </div>
+        </section>
+
+        <!-- INFO MODAL -->
+        <div id="info-modal" class="hidden" onclick="game.hideInfo()">
+            <div class="info-content" onclick="event.stopPropagation()">
+                <h2 id="info-title">GAME INFO</h2>
+                <div id="info-text"></div>
+                <button class="glitch-btn" onclick="game.hideInfo()">CLOSE</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>

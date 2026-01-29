@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Mirror Interface</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div id="scanlines"></div>
+    <div id="vignette"></div>
+    <div id="flicker-overlay"></div>
+
+    <!-- HORROR GHOSTS -->
+    <img id="ghost-tr" class="ghost-corner" src="assets/ghost.png" alt="">
+    <img id="ghost-bl" class="ghost-corner" src="assets/ghost.png" alt="">
+
+    <!-- DECOR LAYER (Background Text & Lines) -->
+    <div id="decor-layer">
+        <div class="hud-block top-left">
+            <div class="glitch-text">OBSERVE</div>
+            <div class="sub-text">CAM_04 [REC] <br> POS: 44.5, 92.1 <br> ISO: 800</div>
+        </div>
+        <div class="hud-block top-right">
+            <div class="glitch-text">JUDGE</div>
+            <div class="sub-text">CPU: 99% <br> MEM: CORRUPT <br> NET: UNSTABLE</div>
+        </div>
+        <div class="hud-block bottom-left">
+            <div class="glitch-text">COMPLY</div>
+            <div class="sub-text">0x4F 0x42 0x45 0x59 <br> 0x53 0x55 0x42 0x4D <br> 0x49 0x54 0x2E 0x2E</div>
+        </div>
+        <div class="hud-block bottom-right">
+            <div class="glitch-text">DECAY</div>
+            <div class="sub-text">ERROR: SOUL_NOT_FOUND <br> RETRYING... <br> FAILED.</div>
+        </div>
+
+        <!-- Additional Latin Words -->
+        <div class="latin-word" style="top: 15%; left: 10%;">MORS</div>
+        <div class="latin-word" style="top: 25%; right: 15%;">VITA</div>
+        <div class="latin-word" style="top: 45%; left: 5%;">SALVA</div>
+        <div class="latin-word" style="top: 55%; right: 8%;">OCCIDE</div>
+        <div class="latin-word" style="top: 70%; left: 12%;">IUDICA</div>
+        <div class="latin-word" style="top: 80%; right: 18%;">DAMNA</div>
+        <div class="latin-word" style="top: 35%; left: 85%;">CULPA</div>
+        <div class="latin-word" style="top: 60%; left: 90%;">POENA</div>
+
+        <div class="grid-lines"></div>
+        <div class="scan-line"></div>
+    </div>
+
+    <!-- AUDIO CONTROLLER -->
+    <audio id="bg-music" loop>
+        <source src="assets/soundtrack.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="sfx-laugh">
+        <source src="assets/laugh.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- MAIN CONTAINER -->
+    <div id="game-container">
+
+        <!-- PHASE 1: START -->
+        <section id="phase-start" class="phase active">
+            <h1 class="glitch-text" data-text="THE MIRROR INTERFACE">THE MIRROR INTERFACE</h1>
+            <p class="subtitle">A DARK SURVIVAL EXPERIENCE</p>
+            <div class="fade-delay">
+                <button id="btn-start" class="glitch-btn" onclick="game.startSequence()">BEGIN ASSESSMENT</button>
+                <div style="margin-top: 20px;">
+                    <label
+                        style="color: #fff; font-size: 0.9rem; font-weight: bold; cursor: pointer; text-shadow: 0 0 5px black;">
+                        <input type="checkbox" id="chk-sound" onchange="game.toggleSound()" checked> ENABLE AUDIO SYSTEM
+                    </label>
+                </div>
+                <p class="warning blink">WARNING: INTERFACE MAY CAUSE DISORIENTATION</p>
+                <p class="clue-text">"They are watching."</p>
+            </div>
+        </section>
+
+        <!-- PURE VIDEO PHASE (Local Video) -->
+        <section id="phase-video" class="phase hidden">
+            <video id="intro-video" src="assets/compressed_trailer.mp4" playsinline>
+                Your browser does not support the video tag.
+            </video>
+            <div id="skip-hint" class="blink">CLICK TO SKIP CONSCIOUSNESS</div>
+        </section>
+
+        <!-- PHASE 2: VIDEO EXPLANATION (YouTube Fallback) -->
+        <section id="phase-video-2" class="phase hidden">
+            <!-- YouTube Player will be injected here -->
+            <div id="yt-player-2"></div>
+        </section>
+
+        <!-- PHASE 2: CARDS (SOUL WAGER) -->
+        <section id="phase-cards" class="phase hidden">
+            <button class="info-btn" onclick="game.showInfo('cards')">i</button>
+            <h2>THE WAGER</h2>
+            <p class="game-brief">Each card holds a piece of your soul.</p>
+
+            <!-- Soul Meter -->
+            <div class="soul-meter">
+                <p>SOUL INTEGRITY: <span id="soul-value">100</span>%</p>
+                <div class="soul-bar-container">
+                    <div id="soul-bar" style="width: 100%;"></div>
+                </div>
+            </div>
+
+            <div id="card-arena">
+                <div class="card-side">
+                    <p>YOU</p>
+                    <div id="card-player" class="card">
+                        <p class="card-name">???</p>
+                        <p class="card-power">?</p>
+                    </div>
+                </div>
+                <div class="card-vs">VS</div>
+                <div class="card-side">
+                    <p>THE SYSTEM</p>
+                    <div id="card-ai" class="card">
+                        <p class="card-name">???</p>
+                        <p class="card-power">?</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="card-status">How much of your soul will you risk?</div>
+
+            <div class="wager-controls">
+                <p>WAGER AMOUNT:</p>
+                <div class="wager-buttons">
+                    <button class="glitch-btn" onclick="game.setWager(10)">10% SOUL</button>
+                    <button class="glitch-btn" onclick="game.setWager(25)">25% SOUL</button>
+                    <button class="glitch-btn" onclick="game.setWager(50)">50% SOUL</button>
+                    <button class="glitch-btn" onclick="game.setWager(100)">ALL IN</button>
+                </div>
+            </div>
+
+            <div id="card-hand" class="card-hand"></div>
+            <div class="controls">
+                <button id="btn-deal" class="glitch-btn" onclick="game.dealCards()">DEAL CARDS</button>
+                <button id="btn-cheat" class="hidden glitch-btn" onclick="game.cardCheat()">OVERRIDE SYSTEM</button>
+            </div>
+        </section>
+
+        <!-- PHASE 3: TROLLEY (Expanded) -->
+        <section id="phase-trolley" class="phase hidden">
+            <button class="info-btn" onclick="game.showInfo('trolley')">i</button>
+            <h2 id="trolley-title">SCENARIO 14-B</h2>
+            <p class="game-brief">To choose is to suffer.</p>
+            <div class="scenario-box">
+                <p id="trolley-desc" class="glitch-text">A trolley is barreling towards 5 people...</p>
+            </div>
+            <div class="timer-bar-container">
+                <div id="timer-bar"></div>
+            </div>
+            <p id="timer-text">20</p>
+            <div class="controls" id="trolley-controls">
+                <button id="btn-opt-a" class="glitch-btn" onclick="game.trolleyChoice('A')">PULL LEVER (Kill 1)</button>
+                <button id="btn-opt-b" class="glitch-btn" onclick="game.trolleyChoice('B')">DO NOTHING (Kill 5)</button>
+            </div>
+        </section>
+
+        <!-- PHASE 4: RITUAL (Breath-Bone-Blood) -->
+        <section id="phase-rps" class="phase hidden">
+            <button class="info-btn" onclick="game.showInfo('rps')">i</button>
+            <h2>THE RITUAL</h2>
+            <p class="game-brief">Elements of the body create balance.</p>
+            <div id="rps-arena">
+                <div class="rps-side">
+                    <p>YOU</p>
+                    <div id="rps-player-move" class="rps-card">?</div>
+                </div>
+                <div class="rps-vs">VS</div>
+                <div class="rps-side">
+                    <p>SYSTEM</p>
+                    <div id="rps-ai-move" class="rps-card">?</div>
+                </div>
+            </div>
+            <div id="rps-result" class="glitch-text">CHOOSE YOUR ELEMENT</div>
+            <div class="controls">
+                <button class="glitch-btn" onclick="game.playRps('BREATH')">BREATH 🌬️</button>
+                <button class="glitch-btn" onclick="game.playRps('BONE')">BONE 🦴</button>
+                <button class="glitch-btn" onclick="game.playRps('BLOOD')">BLOOD 🩸</button>
+            </div>
+            <p id="rps-status"></p>
+        </section>
+
+        <!-- PHASE 5: CHAT -->
+        <section id="phase-chat" class="phase hidden">
+            <h2>CROSS EXAMINATION</h2>
+            <img id="mask-preview" class="mask-glitch hidden" src="assets/maskGlitch.png" alt="">
+            <div id="chat-log">
+                <p class="ai-msg">SYSTEM: Why are you here?</p>
+            </div>
+            <div class="chat-input-area">
+                <input type="text" id="chat-input" placeholder="Type your answer..."
+                    onkeydown="if(event.key==='Enter') game.chatSend()">
+                <button class="glitch-btn" onclick="game.chatSend()">SEND</button>
+            </div>
+        </section>
+
+        <!-- PHASE 6: REVEAL -->
+        <section id="phase-reveal" class="phase hidden">
+            <h1>EVALUATION COMPLETE</h1>
+            <div class="archetype-card">
+                <img id="arch-mask" class="archetype-mask" src="assets/maskPhilosopher.png" alt="Your Mask">
+                <h2 id="arch-name" class="glitch">ARCHETYPE</h2>
+                <p id="arch-quote">"Quote"</p>
+                <p id="arch-desc">Description</p>
+                <div class="stats-box" id="arch-stats">
+                    <!-- Stats injected here -->
+                </div>
+            </div>
+            <button class="glitch-btn" onclick="location.reload()">RESTART SIMULATION</button>
+        </section>
+
+        <!-- INFO MODAL -->
+        <div id="info-modal" class="hidden" onclick="game.hideInfo()">
+            <div class="info-content" onclick="event.stopPropagation()">
+                <h2 id="info-title">GAME INFO</h2>
+                <div id="info-text"></div>
+                <button class="glitch-btn" onclick="game.hideInfo()">CLOSE</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>

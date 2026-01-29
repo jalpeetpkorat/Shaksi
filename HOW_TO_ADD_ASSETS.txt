@@ -1,0 +1,79 @@
+HOW TO ADD YOUR OWN ASSETS
+==================================================
+
+The game needs specific files to look nice.
+It looks for them in the "assets" folder.
+
+STEP 1: OPEN THE FOLDER
+--------------------------------------------------
+Go to: Desktop -> code -> game -> mirror_web -> assets
+
+
+STEP 2: RENAME YOUR FILES
+--------------------------------------------------
+You must rename your files to match this list EXACTLY.
+(Capital letters matter! No spaces!)
+
+[IMAGES]
+1. Start Screen BG     ->  bgStart.png
+2. Video Phase BG      ->  bgVideo.png
+3. Card Game BG        ->  bgCards.png
+4. Trolley BG          ->  bgTrolley.png
+5. RPS BG              ->  bgRps.png
+6. Chat BG             ->  bgChat.png
+7. Reveal BG           ->  bgReveal.png
+8. Card Back Image     ->  cardBack.png  (Your 'Component 4')
+9. Card Face Image     ->  cardFace.png  (Your 'Component 4-1')
+10. Ghost Image        ->  ghost.png
+
+[ARCHETYPE MASKS] <-- NEW!
+11. Philosopher Mask   ->  maskPhilosopher.png
+12. Martyr Mask        ->  maskMartyr.png
+13. Executioner Mask   ->  maskExecutioner.png
+14. Glitch Mask        ->  maskGlitch.png
+15. Acolyte Mask       ->  maskAcolyte.png
+
+[VIDEO]
+16. The Trailer Video  ->  trailer.mp4
+17. Explanation Video  ->  explanation.mp4
+
+[AUDIO]
+18. Background Music   ->  soundtrack.mp3
+
+
+STEP 3: COLOR PALETTE FOR YOUR ASSETS
+--------------------------------------------------
+To match the game's horror theme, use these colors:
+
+PRIMARY COLORS:
+- Deep Blood Black:  #2D0304
+- Dark Red:          #5A0909
+- Rust Red:          #802000
+- Gold/Orange:       #A66700
+
+TIPS FOR MASKS:
+- Design 5 different masks (one per archetype)
+- Keep them DARK and CREEPY
+- Use red/black color scheme
+- Size: 400x400px recommended
+- PNG format with transparency
+- Add cracks, blood, or distortion
+- Each mask should reflect its archetype:
+  * Philosopher: Thoughtful, cracked
+  * Martyr: Burned, sacrificial
+  * Executioner: Sharp, mechanical
+  * Glitch: Corrupted, digital
+  * Acolyte: Devoted, pristine
+
+TIPS FOR OTHER ASSETS:
+- Keep backgrounds DARK (use #2D0304 as base)
+- Use red tones (#5A0909, #802000) for accents
+- Use gold (#A66700) sparingly for highlights
+- Avoid bright/vibrant colors
+- Add grain/noise for texture
+- Keep contrast LOW for horror atmosphere
+
+
+STEP 4: DONE
+--------------------------------------------------
+Just refresh index.html.

@@ -1,0 +1,92 @@
+/* GAME CONTAINER - CRITICAL LAYOUT FIX */
+#game-container {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 20;
+    /* Above decorations */
+    /* Ensure only the active phase dictates flow */
+    overflow: hidden;
+}
+
+/* Phase Alignment Refinement */
+.phase {
+    display: none;
+    width: 90%;
+    max-width: 900px;
+    max-height: 95vh;
+    overflow-y: auto;
+    /* Scroll if too tall */
+    position: relative;
+    background: rgba(10, 0, 0, 0.95);
+    border: 1px solid var(--accent-red);
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.9);
+    padding: 30px;
+
+    /* Internal Layout */
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+
+.phase.active {
+    display: flex !important;
+    animation: fadeIn 0.4s ease-out forwards;
+}
+
+/* Ensure Info Button is always on top right of the CARD */
+.info-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 32px;
+    /* Smaller, sharper */
+    height: 32px;
+    border-radius: 50%;
+    border: 2px solid var(--accent-red);
+    background: #000;
+    color: var(--accent-red);
+    font-family: serif;
+    font-style: italic;
+    font-weight: 900;
+    font-size: 1.2rem;
+    display: flex;
+    /* Flex center the letter 'i' */
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 999;
+    box-shadow: 0 0 8px var(--accent-red);
+    padding: 0;
+    line-height: 1;
+}
+
+.info-btn:hover {
+    background: var(--accent-red);
+    color: #000;
+    box-shadow: 0 0 15px var(--accent-red);
+    transform: scale(1.1);
+}
+
+/* Normalize margins for consistent spacing */
+h1,
+h2 {
+    margin: 0 0 15px 0;
+    text-align: center;
+}
+
+#card-arena {
+    margin: 10px 0;
+    gap: 40px;
+}
+
+/* Ensure Soul Meter doesn't stretch weirdly */
+.soul-meter {
+    width: 80%;
+    max-width: 600px;
+    margin: 10px auto;
+}
