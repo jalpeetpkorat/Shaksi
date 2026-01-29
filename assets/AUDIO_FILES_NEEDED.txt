@@ -1,0 +1,14 @@
+REQUIRED AUDIO FILES
+====================
+
+The game expects the following audio files to be present in this folder ('assets'):
+
+1. soundtrack.mp3
+   - Background music.
+   - Will loop automatically.
+   - Toggled by the "ENABLE AUDIO SYSTEM" checkbox.
+
+2. laugh.mp3
+   - Sound effect for the "Jester Scare" event.
+
+Please add these files to this folder for the audio features to work correctly.

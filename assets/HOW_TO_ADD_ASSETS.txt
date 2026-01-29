@@ -1,0 +1,27 @@
+HOW TO ADD ASSETS
+=================
+
+To ensure the game works correctly, please place the following files in this `assets` folder:
+
+VIDEO FILES
+-----------
+1. compressed_trailer.mp4 (REQUIRED)
+   - Usage: The main intro video.
+   - Note: Must be named exactly 'compressed_trailer.mp4'.
+
+2. explanation.mp4 (REQUIRED)
+   - Usage: The second video that explains the game rules.
+
+AUDIO FILES
+-----------
+3. soundtrack.mp3 (REQUIRED)
+   - Usage: Background music.
+   - Note: Enabled by clicking "BEGIN ASSESSMENT" or the audio checkbox.
+
+4. laugh.mp3 (REQUIRED)
+   - Usage: Sound effect for the jump scare event.
+
+IMAGES
+------
+- Ensure all images provided (backgrounds, cards, masks) remain in this folder.
+- Do not rename the image files unless you also update the code.
